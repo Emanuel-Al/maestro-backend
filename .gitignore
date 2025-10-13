@@ -58,3 +58,5 @@ tsconfig.tsbuildinfo
 .vite/
 .eslintcache
 storybook-static/
+
+/src/generated/prisma
