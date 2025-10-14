@@ -53,3 +53,16 @@ export async function deleteSong(id:number){
         throw new Error("Erro ao deletar música");
     }
 }
+
+export async function updateSong(id:number, data: Partial<SongCreateInput>){
+    try{
+        const song = prisma.song.update({
+            where: {id},
+            data,
+        });
+        return song;
+    }catch(e:any){
+        console.log(e);
+        throw new Error("Erro ao atualizar música")
+    }
+}
