@@ -1,4 +1,4 @@
-import { createSong, getAllSongs, getSong } from "../services/SongService";
+import { createSong, getAllSongs, getSong, deleteSong } from "../services/SongService";
 import { Request, Response } from "express";
 export const createSongController = async (req: Request,res: Response) =>{
     try{
@@ -23,6 +23,16 @@ export const getSongController = async(req:Request, res:Response) => {
         const id = Number(req.params.id)
         const song = await getSong(id);
         res.status(200).json(song);
+    }catch(e:any){
+        res.status(500).json({message: e.message})
+    }
+}
+
+export const deleteSongController = async(req:Request, res:Response) => {
+    try{
+        const id = Number(req.params.id);
+        await deleteSong(id);
+        res.status(200).json({message: "Song delete successfuly"})
     }catch(e:any){
         res.status(500).json({message: e.message})
     }

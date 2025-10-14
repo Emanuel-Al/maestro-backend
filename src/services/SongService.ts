@@ -41,3 +41,15 @@ export async function getSong(id:number){
         throw new Error("Erro ao buscar a música");
     }
 }
+
+export async function deleteSong(id:number){
+    try{
+        const song = await prisma.song.delete({
+            where:{id}
+        })
+        return song;
+    }catch(e){
+        console.log(e);
+        throw new Error("Erro ao deletar música");
+    }
+}
