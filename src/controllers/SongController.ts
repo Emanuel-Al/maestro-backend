@@ -1,6 +1,6 @@
-import createSong from "../services/SongService";
+import { createSong, getAllSongs } from "../services/SongService";
 import { Request, Response } from "express";
-export const createSongControler = async (req: Request,res: Response) =>{
+export const createSongController = async (req: Request,res: Response) =>{
     try{
         const song = await createSong(req.body);
         res.status(201).json(song);
@@ -8,4 +8,12 @@ export const createSongControler = async (req: Request,res: Response) =>{
         console.log("Error message: ", e);
         res.status(500).json({message: e.message || "Error creating song"})
     }   
+}
+export const getAllSongsController = async(req:Request, res:Response) => {
+    try{
+        const songs = await getAllSongs();
+        res.status(201).json(songs);
+    }catch(e:any){
+        res.status(500).json({message: e.message || "Error retrieving songs"})
+    }
 }

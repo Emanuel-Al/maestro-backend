@@ -1,7 +1,7 @@
 import prisma from "../config/prisma";
 import { SongStatus } from "../generated/prisma";
 
-type SongCreateInput = {
+export type SongCreateInput = {
     name: string, 
     band: string, 
     album: string,
@@ -10,7 +10,7 @@ type SongCreateInput = {
     status: SongStatus
 }
 
-async function createSong(data: SongCreateInput){
+export async function createSong(data: SongCreateInput){
     try{
         const song = await prisma.song.create({data})
         return song;
@@ -20,4 +20,12 @@ async function createSong(data: SongCreateInput){
     }
 }
 
-export default createSong;
+export async function getAllSongs(){
+    try{
+        const songs = await prisma.song.findMany();
+        return songs;
+    }catch(e:any){
+        console.log(e);
+        throw new Error("Erro ao pegar músicas");
+    }
+}
