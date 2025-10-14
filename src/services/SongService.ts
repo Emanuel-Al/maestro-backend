@@ -29,3 +29,15 @@ export async function getAllSongs(){
         throw new Error("Erro ao pegar músicas");
     }
 }
+
+export async function getSong(id:number){
+    try{
+        const song = await prisma.song.findUnique({
+            where: {id}
+        });
+        return song;
+    }catch(e:any){
+        console.log(e);
+        throw new Error("Erro ao buscar a música");
+    }
+}
