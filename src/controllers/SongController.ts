@@ -12,7 +12,7 @@ export const createSongController = async (req: Request,res: Response) =>{
 export const getAllSongsController = async(req:Request, res:Response) => {
     try{
         const songs = await getAllSongs();
-        res.status(201).json(songs);
+        res.status(200).json(songs);
     }catch(e:any){
         res.status(500).json({message: e.message || "Error retrieving songs"})
     }
