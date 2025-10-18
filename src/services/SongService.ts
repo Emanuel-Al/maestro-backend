@@ -5,7 +5,7 @@ export type SongCreateInput = {
     name: string, 
     band: string, 
     album: string,
-    description: string,
+    description?: string,
     tuning: string,
     status: SongStatus
 }
@@ -13,7 +13,7 @@ export type SongCreateInput = {
 export async function createSong(data: SongCreateInput){
     try{
         const song = await prisma.song.create({data})
-        return song;
+        return song;  
     }catch(e){
         console.log(e);
         throw new Error("Erro ao criar música");

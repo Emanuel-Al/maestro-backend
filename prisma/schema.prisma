@@ -27,7 +27,7 @@ model Song {
   name String
   band String   
   album String
-  description String
+  description String?
   tuning String
   status SongStatus
   createdAt DateTime @default(now())
