@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createSongController, getAllSongsController,getSongController, deleteSongController, updateSongController } from "../controllers/SongController";
+import { createSongController, getAllSongsController,getSongController, deleteSongController, updateSongController, countLearntController } from "../controllers/SongController";
 
 const router = Router();
 
@@ -8,5 +8,6 @@ router.get("/", getAllSongsController)
 router.get("/:id", getSongController)
 router.delete("/:id", deleteSongController)
 router.put("/:id", updateSongController)
+router.get("/count/learnt", countLearntController)
 
 export default router;
