@@ -66,3 +66,18 @@ export async function updateSong(id:number, data: Partial<SongCreateInput>){
         throw new Error("Erro ao atualizar música")
     }
 }
+
+
+export async function countLeant(){
+    try{
+        const songCount = await prisma.song.count({
+            where: {
+                status:'LEARNT',
+            },
+        })
+        return songCount;
+    }catch(e:any){
+        console.log(e);
+        throw new Error("Erro ao contar o status");
+    }
+}
