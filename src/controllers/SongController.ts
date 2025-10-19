@@ -1,4 +1,4 @@
-import { createSong, getAllSongs, getSong, deleteSong, updateSong } from "../services/SongService";
+import { createSong, getAllSongs, getSong, deleteSong, updateSong, countLeant } from "../services/SongService";
 import { Request, Response } from "express";
 export const createSongController = async (req: Request,res: Response) =>{
     try{
@@ -45,5 +45,14 @@ export const updateSongController = async (req:Request, res:Response) => {
         res.status(200).json({message: "Song updated successfuly", song})
     }catch(e:any){
         res.status(500).json({message: e.message});
+    }
+}
+
+export const countLearntController = async (req:Request, res:Response) => {
+    try{
+        const songCount = await countLeant();
+        res.status(200).json({message: `Songs learnt: ${songCount}`})
+    }catch(e:any){
+        res.status(500).json({message: e.message})
     }
 }
