@@ -68,16 +68,24 @@ export async function updateSong(id:number, data: Partial<SongCreateInput>){
 }
 
 
-export async function countLeant(){
+export async function countStatus(){
     try{
-        const songCount = await prisma.song.count({
-            where: {
-                status:'LEARNT',
-            },
-        })
-        return songCount;
+        const songs = await prisma.song.groupBy({
+            by: ['status'],
+            _count: {status:true},
+        });
+        const result = {
+            LEARNT: 0,
+            LEARNING: 0,
+            WANT_TO_LEARN: 0,
+            PRACTICING: 0,
+        }
+        for (const item of songs) {
+        result[item.status] = item._count.status;
+  }
+  return result;
     }catch(e:any){
         console.log(e);
-        throw new Error("Erro ao contar o status");
     }
+
 }
