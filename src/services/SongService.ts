@@ -76,21 +76,43 @@ export async function deleteSong(id:number){
     try{
         const deletedSong = await prisma.song.findUnique({
             where:{id},
-            select: {bandId: true},
+            select: {bandId: true, tuningId: true},
         })
-        const bandId = deletedSong?.bandId;
+        if (!deletedSong) throw new Error("Música não encontrada");
+
+        const {bandId, tuningId} = deletedSong;
+
         await prisma.song.delete({
             where:{id},
             select:{id:true},
         })
+        
+        // Deleting band if there is no more songs for that band
+        if(bandId){
         const bands = await prisma.song.findMany({
             where:{bandId},
         })
+
         if(bands.length === 0 && bandId != null){
             await prisma.band.delete({
                 where:{id: bandId},
             })
         };
+        }
+
+        //Deleting tuning if there is no more songs in that tuning
+        if(tuningId){
+            const tuning = await prisma.song.findMany({
+            where: {id},
+            select:{id:true}
+        });
+            if(tuning.length == 0){
+                await prisma.tuning.delete({
+                    where:{id:tuningId}
+                })
+            }
+        }
+
     }catch(e){
         console.log(e);
         throw new Error("Erro ao deletar música");
