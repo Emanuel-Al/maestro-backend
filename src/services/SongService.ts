@@ -3,16 +3,41 @@ import { SongStatus } from "../generated/prisma";
 
 export type SongCreateInput = {
     name: string, 
-    band: string, 
+    band: {name: string}, 
+    bandId: number,
     album: string,
     description?: string,
-    tuning: string,
+    tuning: {name: string},
+    tuningId: number,
     status: SongStatus
 }
 
 export async function createSong(data: SongCreateInput){
     try{
-        const song = await prisma.song.create({data})
+        const band = await prisma.band.upsert({
+            where: {name: data.band.name},
+            update: {},
+            create: {name: data.band.name}
+        })
+        const tuning = await prisma.tuning.upsert({
+            where: {name: data.tuning.name},
+            update: {},
+            create: {name: data.tuning.name}
+        })
+        const song = await prisma.song.create({
+            data: {
+                name: data.name,
+                album: data.album,
+                description: data.description,
+                status: data.status,
+                bandId: band.id,
+                tuningId: tuning.id,
+            },
+            include: {
+                band: true,
+                tuning: true,
+            },
+    });
         return song;  
     }catch(e){
         console.log(e);
@@ -22,7 +47,12 @@ export async function createSong(data: SongCreateInput){
 
 export async function getAllSongs(){
     try{
-        const songs = await prisma.song.findMany();
+        const songs = await prisma.song.findMany({
+            include:{
+                band:true,
+                tuning:true,
+            }
+        });
         return songs;
     }catch(e:any){
         console.log(e);
@@ -58,7 +88,12 @@ export async function updateSong(id:number, data: Partial<SongCreateInput>){
     try{
         const song = prisma.song.update({
             where: {id},
-            data,
+            data:{
+                name: data.name,
+                album: data.album, 
+                description: data.description,
+                status: data.status
+            },
         });
         return song;
     }catch(e:any){
