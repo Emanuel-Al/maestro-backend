@@ -25,10 +25,25 @@ enum SongStatus {
 model Song {
   id Int @id @default(autoincrement())
   name String
-  band String   
+  band Band? @relation(fields:[bandId], references: [id])   
+  bandId Int?
   album String
   description String?
-  tuning String
+  tuning Tuning? @relation(fields:[tuningId], references:[id])
+  tuningId Int?
   status SongStatus
   createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Band{
+  id Int @id @default(autoincrement())
+  name String @unique
+  songs Song[]
+}
+
+model Tuning{
+  id Int @id @default(autoincrement())
+  name String @unique
+  songs Song[]
 }
