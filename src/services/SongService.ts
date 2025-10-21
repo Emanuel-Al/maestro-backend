@@ -74,10 +74,23 @@ export async function getSong(id:number){
 
 export async function deleteSong(id:number){
     try{
-        const song = await prisma.song.delete({
-            where:{id}
+        const deletedSong = await prisma.song.findUnique({
+            where:{id},
+            select: {bandId: true},
         })
-        return song;
+        const bandId = deletedSong?.bandId;
+        await prisma.song.delete({
+            where:{id},
+            select:{id:true},
+        })
+        const bands = await prisma.song.findMany({
+            where:{bandId},
+        })
+        if(bands.length === 0 && bandId != null){
+            await prisma.band.delete({
+                where:{id: bandId},
+            })
+        };
     }catch(e){
         console.log(e);
         throw new Error("Erro ao deletar música");
