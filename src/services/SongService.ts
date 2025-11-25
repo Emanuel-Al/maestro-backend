@@ -63,7 +63,11 @@ export async function getAllSongs(){
 export async function getSong(id:number){
     try{
         const song = await prisma.song.findUnique({
-            where: {id}
+            where: {id},
+            include:{
+                band: true,
+                tuning: true,
+            }
         });
         return song;
     }catch(e:any){
@@ -87,7 +91,6 @@ export async function deleteSong(id:number){
             select:{id:true},
         })
         
-        // Deleting band if there is no more songs for that band
         if(bandId){
         const bands = await prisma.song.findMany({
             where:{bandId},
@@ -100,7 +103,6 @@ export async function deleteSong(id:number){
         };
         }
 
-        //Deleting tuning if there is no more songs in that tuning
         if(tuningId){
             const tuning = await prisma.song.findMany({
             where: {id},
@@ -121,14 +123,41 @@ export async function deleteSong(id:number){
 
 export async function updateSong(id:number, data: Partial<SongCreateInput>){
     try{
+        let bandId: number | undefined;
+        let tuningId: number | undefined;
+
+        if(data.band){
+            const band = await prisma.band.upsert({
+                where: {name: data.band.name},
+                update: {},
+                create: {name: data.band.name}
+            });
+            bandId = band.id;
+        }
+
+        if(data.tuning){
+            const tuning = await prisma.tuning.upsert({
+                where: {name: data.tuning.name},
+                update: {},
+                create: {name: data.tuning.name}
+            });
+            tuningId = tuning.id;
+        }
+
         const song = prisma.song.update({
             where: {id},
             data:{
                 name: data.name,
                 album: data.album, 
                 description: data.description,
-                status: data.status
+                status: data.status,
+                ...(bandId && {bandId}),
+                ...(tuningId && {tuningId}),
             },
+            include: {
+                band: true,
+                tuning: true,
+            }
         });
         return song;
     }catch(e:any){
