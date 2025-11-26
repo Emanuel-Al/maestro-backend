@@ -2,6 +2,7 @@ import express from "express";
 import SongRoutes from "./routes/SongRoutes"
 import BandRoutes from "./routes/BandRoutes"
 import TuningRoutes from "./routes/TuningRoutes"
+import UserRoutes from "./routes/UserRoutes"
 import cors from "cors";
 
 const app = express();
@@ -13,6 +14,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use("/user", UserRoutes)
 app.use("/songs", SongRoutes);
 app.use("/bands", BandRoutes);
 app.use("/tuning", TuningRoutes);

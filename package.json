@@ -22,6 +22,7 @@
   "homepage": "https://github.com/Emanuel-Al/maestro-backend#readme",
   "dependencies": {
     "@prisma/client": "^6.17.1",
+    "argon2": "^0.44.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "prisma": "^6.17.1"
