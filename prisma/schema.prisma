@@ -12,38 +12,55 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
 
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  songs     Song[]
+  bands     Band[]
+  tunings   Tuning[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 enum SongStatus {
   WANT_TO_LEARN
   LEARNING
-  PRACTICING 
+  PRACTICING
   LEARNT
 }
 
 model Song {
-  id Int @id @default(autoincrement())
-  name String
-  band Band? @relation(fields:[bandId], references: [id])   
-  bandId Int?
-  album String
+  id          Int        @id @default(autoincrement())
+  name        String
+  band        Band?      @relation(fields: [bandId], references: [id])
+  bandId      Int?
+  album       String
   description String?
-  tuning Tuning? @relation(fields:[tuningId], references:[id])
-  tuningId Int?
-  status SongStatus
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  tuning      Tuning?    @relation(fields: [tuningId], references: [id])
+  tuningId    Int?
+  status      SongStatus
+  user        User       @relation(fields: [userId], references: [id])
+  userId      Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now()) @updatedAt
 }
 
-model Band{
-  id Int @id @default(autoincrement())
-  name String @unique
-  songs Song[]
+model Band {
+  id     Int    @id @default(autoincrement())
+  name   String @unique
+  songs  Song[]
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int
 }
 
-model Tuning{
-  id Int @id @default(autoincrement())
-  name String @unique
-  songs Song[]
+model Tuning {
+  id     Int    @id @default(autoincrement())
+  name   String @unique
+  songs  Song[]
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int
 }
