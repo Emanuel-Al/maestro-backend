@@ -2,7 +2,8 @@ import prisma from "../config/prisma";
 import { SongStatus } from "../generated/prisma";
 
 export type SongCreateInput = {
-    name: string, 
+    name: string,
+    userId: number,
     band: {name: string}, 
     bandId: number,
     album: string,
@@ -17,12 +18,12 @@ export async function createSong(data: SongCreateInput){
         const band = await prisma.band.upsert({
             where: {name: data.band.name},
             update: {},
-            create: {name: data.band.name}
+            create: {name: data.band.name, userId: data.userId}
         })
         const tuning = await prisma.tuning.upsert({
             where: {name: data.tuning.name},
             update: {},
-            create: {name: data.tuning.name}
+            create: {name: data.tuning.name, userId: data.userId}
         })
         const song = await prisma.song.create({
             data: {
@@ -32,6 +33,7 @@ export async function createSong(data: SongCreateInput){
                 status: data.status,
                 bandId: band.id,
                 tuningId: tuning.id,
+                userId: data.userId
             },
             include: {
                 band: true,
@@ -45,9 +47,12 @@ export async function createSong(data: SongCreateInput){
     }
 }
 
-export async function getAllSongs(){
+export async function getAllSongs(userId: number){
     try{
         const songs = await prisma.song.findMany({
+            where:{
+                userId
+            },
             include:{
                 band:true,
                 tuning:true,
@@ -60,10 +65,10 @@ export async function getAllSongs(){
     }
 }
 
-export async function getSong(id:number){
+export async function getSong(id:number, userId: number){
     try{
         const song = await prisma.song.findUnique({
-            where: {id},
+            where: {id, userId},
             include:{
                 band: true,
                 tuning: true,
@@ -76,10 +81,10 @@ export async function getSong(id:number){
     }
 }
 
-export async function deleteSong(id:number){
+export async function deleteSong(id:number, userId: number){
     try{
         const deletedSong = await prisma.song.findUnique({
-            where:{id},
+            where:{id, userId},
             select: {bandId: true, tuningId: true},
         })
         if (!deletedSong) throw new Error("Música não encontrada");
@@ -105,10 +110,10 @@ export async function deleteSong(id:number){
 
         if(tuningId){
             const tuning = await prisma.song.findMany({
-            where: {id},
+            where: {tuningId},
             select:{id:true}
         });
-            if(tuning.length == 0){
+            if(tuning.length === 0){
                 await prisma.tuning.delete({
                     where:{id:tuningId}
                 })
@@ -121,7 +126,7 @@ export async function deleteSong(id:number){
     }
 }
 
-export async function updateSong(id:number, data: Partial<SongCreateInput>){
+export async function updateSong(id:number, data: Partial<SongCreateInput>, userId: number){
     try{
         let bandId: number | undefined;
         let tuningId: number | undefined;
@@ -130,7 +135,7 @@ export async function updateSong(id:number, data: Partial<SongCreateInput>){
             const band = await prisma.band.upsert({
                 where: {name: data.band.name},
                 update: {},
-                create: {name: data.band.name}
+                create: {name: data.band.name, userId: userId}
             });
             bandId = band.id;
         }
@@ -139,7 +144,7 @@ export async function updateSong(id:number, data: Partial<SongCreateInput>){
             const tuning = await prisma.tuning.upsert({
                 where: {name: data.tuning.name},
                 update: {},
-                create: {name: data.tuning.name}
+                create: {name: data.tuning.name, userId: userId}
             });
             tuningId = tuning.id;
         }
@@ -167,9 +172,10 @@ export async function updateSong(id:number, data: Partial<SongCreateInput>){
 }
 
 
-export async function countStatus(){
+export async function countStatus(userId: number){
     try{
         const songs = await prisma.song.groupBy({
+            where: {userId: userId},
             by: ['status'],
             _count: {status:true},
         });
@@ -185,6 +191,7 @@ export async function countStatus(){
   return result;
     }catch(e:any){
         console.log(e);
+        throw new Error("Erro ao contar status das músicas");
     }
 
 }
