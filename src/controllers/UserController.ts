@@ -1,4 +1,4 @@
-import { createUser } from "../services/UserService";
+import { createUser,getUsers } from "../services/UserService";
 import { Request, Response } from "express";
 
 export async function createUserController(req:Request, res:Response){
@@ -8,5 +8,14 @@ export async function createUserController(req:Request, res:Response){
 
     }catch(e: any){
         return res.status(500).json(e.message)
+    }
+}
+
+export async function getUsersController(req:Request, res:Response){
+    try{
+        const users = await getUsers();
+        return res.status(200).json(users);
+    }catch(e: any){
+        return res.status(500).json(e.message);
     }
 }

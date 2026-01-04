@@ -25,3 +25,21 @@ export async function createUser(data: UserCreateInput){
         throw new Error("Erro ao criar usuário");
     }
 }
+
+export async function getUsers(){
+    try{
+        const users = await prisma.user.findMany({
+            select: {
+                id: true,
+                email: true,
+                createdAt: true,
+                updatedAt: true,
+
+            }
+        });
+        return users;
+    }catch(e){
+        console.log(e);
+    }
+
+}
