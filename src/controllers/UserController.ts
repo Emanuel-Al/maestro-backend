@@ -1,4 +1,4 @@
-import { createUser,getUsers } from "../services/UserService";
+import { createUser,getUsers, getUserById } from "../services/UserService";
 import { Request, Response } from "express";
 
 export async function createUserController(req:Request, res:Response){
@@ -15,6 +15,17 @@ export async function getUsersController(req:Request, res:Response){
     try{
         const users = await getUsers();
         return res.status(200).json(users);
+    }catch(e: any){
+        return res.status(500).json(e.message);
+    }
+}
+
+export async function getUserByIdController(req:Request, res:Response){
+    try{
+        const id = Number(req.params.id);
+        const user = await getUserById(id);
+        return res.status(200).json(user);
+
     }catch(e: any){
         return res.status(500).json(e.message);
     }

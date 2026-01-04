@@ -43,3 +43,21 @@ export async function getUsers(){
     }
 
 }
+
+export async function getUserById(id:number){
+    try{
+        const user = await prisma.user.findUnique({
+            where: {id},
+            select: {
+                id: true,
+                email: true,
+                name: true,
+                createdAt: true,
+                updatedAt: true,
+            }
+        })
+        return user;
+    }catch(e){
+        console.log(e);
+    }
+}
