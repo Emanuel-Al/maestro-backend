@@ -61,3 +61,14 @@ export async function getUserById(id:number){
         console.log(e);
     }
 }
+
+export async function findUserByEmail(email: string){
+    try{
+        const user = prisma.user.findUnique({
+            where: {email: email}
+        });
+        return user;
+    }catch(e){
+        console.log(e);
+    }
+}
