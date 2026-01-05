@@ -4,8 +4,12 @@ import BandRoutes from "./routes/BandRoutes"
 import TuningRoutes from "./routes/TuningRoutes"
 import UserRoutes from "./routes/UserRoutes"
 import cors from "cors";
+import passport from "passport";
+import { configurePassport } from "./config/passport";
 
 const app = express();
+app.use(passport.initialize());
+configurePassport(passport);
 
 const corsOptions = {
     origin: ["http://localhost:5173"],
