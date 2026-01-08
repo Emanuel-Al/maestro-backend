@@ -40,20 +40,20 @@ export async function authController(req: Request, res: Response) {
   const { email, password } = req.body;
   const user = await findUserByEmail(email);
 
-  if (user) {
-    const auth = await argon2.verify(user.password, password);
-    if (auth) {
-      const token = Jwt.sign(
-        { id: user.id },
-        process.env.JWT_SECRET as string,
-        { expiresIn: "12h" }
-      );
-      return res.json({
-        token: token,
-        user: { id: user.id, name: user.name, email: user.email },
-      });
-    }
-  } else {
-    res.status(401).json("Email ou usuário inválidos");
+  if (!user) {
+    return res.status(401).json({ message: "Credenciais inválidas" });
   }
+  const isPasswordValid = await argon2.verify(user.password, password);
+
+  if (!isPasswordValid) {
+    return res.status(401).json({ message: "Credenciais inválidas" });
+  }
+
+  const token = Jwt.sign({ id: user.id }, process.env.JWT_SECRET as string, {
+    expiresIn: "1d",
+  });
+
+  return res
+    .status(200)
+    .json({ token, user: { id: user.id, name: user.name } });
 }
