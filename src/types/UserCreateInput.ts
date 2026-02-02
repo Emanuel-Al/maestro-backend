@@ -1,5 +1,6 @@
 export type UserCreateInput = {
-    name: string,
-    email: string,
-    password: string,
-}
+  name: string;
+  nickname: string;
+  email: string;
+  password: string;
+};
