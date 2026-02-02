@@ -4,6 +4,7 @@ import {
   getUsers,
   getUserById,
   findUserByEmail,
+  updateUser,
 } from "../services/UserService";
 import { Request, Response } from "express";
 import Jwt from "jsonwebtoken";
@@ -56,4 +57,16 @@ export async function authController(req: Request, res: Response) {
   return res
     .status(200)
     .json({ token, user: { id: user.id, name: user.name } });
+}
+
+export async function updateUserController(req: Request, res: Response) {
+  const id = Number(req.params.id);
+  const user = await updateUser(id, req.body);
+  if (user) {
+    return res.status(200).json(user);
+  } else {
+    return res
+      .status(400)
+      .json({ message: "Não foi possível atualizar usuário" });
+  }
 }
