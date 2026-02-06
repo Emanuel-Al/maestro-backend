@@ -4,6 +4,10 @@ import argon2 from "argon2";
 
 export async function createUser(data: UserCreateInput) {
   try {
+    const userExists = await findUserByEmail(data.email);
+    if (userExists) {
+      throw new Error("Já existe usuário com esse email");
+    }
     const hashedPassword = await argon2.hash(data.password);
     const user = await prisma.user.create({
       data: {
@@ -22,9 +26,9 @@ export async function createUser(data: UserCreateInput) {
       },
     });
     return user;
-  } catch (e) {
+  } catch (e: any) {
     console.log(e);
-    throw new Error("Erro ao criar usuário");
+    throw new Error(e.message || "Erro ao criar usuário");
   }
 }
 
