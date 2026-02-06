@@ -7,7 +7,10 @@
     "strict": false,
     "esModuleInterop": true,
     "noImplicitAny": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "skipDefaultLibCheck": true,
+    "noEmitOnError": false,
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
