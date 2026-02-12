@@ -1,11 +1,12 @@
-import { getAllBands } from "../services/BandService";
+import { getBandsById } from "../services/BandService";
 import { Request, Response } from "express";
 
-export const getAllBandsController = async (req:Request, res:Response) => {
-    try{
-        const bands = await getAllBands();
-        res.status(200).json(bands);
-    }catch(e){
-        res.status(500).json({message: e})
-    }
-}
+export const getAllBandsController = async (req: Request, res: Response) => {
+  try {
+    const user = req.user as any;
+    const bands = await getBandsById(user.id);
+    res.status(200).json(bands);
+  } catch (e) {
+    res.status(500).json({ message: e });
+  }
+};
